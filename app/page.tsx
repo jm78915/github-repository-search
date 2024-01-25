@@ -1,117 +1,122 @@
-import Image from 'next/image';
+'use client';
+
+import clsx from 'clsx';
+import { useState } from 'react';
+import { CgSpinner } from 'react-icons/cg';
+
+import { Repository } from '@/app/component/repository';
+import { Repository as InterfaceRepository } from '@/app/interface/repositories';
 
 export default function Home() {
+    const [query, setQuery] = useState('');
+    const [page, setPage] = useState(1);
+    const [repositories, setRepositories] = useState<InterfaceRepository[]>([]);
+    const [isLoading, setLoading] = useState(false);
+
+    const fetchRepositories = async (query: string, page = 1) => {
+        setPage(page);
+        setLoading(true);
+
+        try {
+            const json: {
+                total_count: number;
+                incomplete_results: boolean;
+                items: InterfaceRepository[];
+            } = await fetch(
+                `/api/search/repositories?query=${query}&page=${page}`,
+            ).then((response) => response.json());
+
+            setRepositories(repositories.concat(json.items));
+        } catch (error) {
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleSearch = () => {
+        setRepositories([]);
+        fetchRepositories(query, 1);
+    };
+
+    const handleLoadMore = () => {
+        fetchRepositories(query, page + 1);
+    };
+
     return (
-        <main className="flex min-h-screen flex-col items-center justify-between p-24">
-            <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-                <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl lg:static lg:w-auto lg:rounded-xl lg:border lg:bg-gray-200  lg:p-4 dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:dark:bg-zinc-800/30">
-                    Get started by editing&nbsp;
-                    <code className="font-mono font-bold">app/page.tsx</code>
-                </p>
-                <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white lg:static lg:h-auto lg:w-auto lg:bg-none dark:from-black dark:via-black">
-                    <a
-                        className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-                        href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-                        rel="noopener noreferrer"
-                        target="_blank"
-                    >
-                        By{' '}
-                        <Image
-                            alt="Vercel Logo"
-                            className="dark:invert"
-                            height={24}
-                            priority={true}
-                            src="/vercel.svg"
-                            width={100}
-                        />
-                    </a>
-                </div>
-            </div>
+        <main className="flex h-screen w-screen flex-col">
+            <form
+                className={clsx(
+                    'flex w-screen flex-shrink-0 flex-col items-center justify-center gap-y-3 transition-all',
+                    {
+                        'h-screen': repositories.length === 0,
+                        'h-32': repositories.length !== 0,
+                    },
+                )}
+                onSubmit={(event) => {
+                    event.preventDefault();
 
-            <div className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40">
-                <Image
-                    alt="Next.js Logo"
-                    className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-                    height={37}
-                    priority={true}
-                    src="/next.svg"
-                    width={180}
+                    handleSearch();
+                }}
+            >
+                <input
+                    className="w-54 rounded-md px-3 py-2 sm:w-96 dark:text-black"
+                    onChange={(event) => {
+                        setQuery(event.target.value);
+                    }}
+                    onKeyDown={(event) => {
+                        if (event.key === 'Enter') {
+                            handleSearch();
+                        }
+                    }}
+                    placeholder="Repository keyword..."
+                    required={true}
+                    type="text"
+                    value={query}
                 />
-            </div>
 
-            <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
-                <a
-                    className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-                    href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-                    rel="noopener noreferrer"
-                    target="_blank"
+                <button
+                    className={clsx(
+                        'flex items-center gap-x-2 rounded-md border px-6 py-1 transition-transform active:scale-95',
+                        'border-gray-300 bg-white hover:bg-gray-100',
+                        'dark:border-gray-400 dark:bg-gray-700 dark:hover:bg-gray-800',
+                        {
+                            'pointer-events-none cursor-not-allowed':
+                                isLoading === true,
+                        },
+                    )}
+                    disabled={isLoading === true}
                 >
-                    <h2 className={`mb-3 text-2xl font-semibold`}>
-                        Docs{' '}
-                        <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-                            -&gt;
-                        </span>
-                    </h2>
-                    <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-                        Find in-depth information about Next.js features and
-                        API.
-                    </p>
-                </a>
+                    <div>搜尋</div>
 
-                <a
-                    className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-                    href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-                    rel="noopener noreferrer"
-                    target="_blank"
-                >
-                    <h2 className={`mb-3 text-2xl font-semibold`}>
-                        Learn{' '}
-                        <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-                            -&gt;
-                        </span>
-                    </h2>
-                    <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-                        Learn about Next.js in an interactive course
-                        with&nbsp;quizzes!
-                    </p>
-                </a>
+                    {repositories.length === 0 && isLoading === true && (
+                        <div className="flex items-center justify-center">
+                            <CgSpinner className="animate-spin" />
+                        </div>
+                    )}
+                </button>
+            </form>
 
-                <a
-                    className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-                    href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-                    rel="noopener noreferrer"
-                    target="_blank"
-                >
-                    <h2 className={`mb-3 text-2xl font-semibold`}>
-                        Templates{' '}
-                        <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-                            -&gt;
-                        </span>
-                    </h2>
-                    <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-                        Explore starter templates for Next.js.
-                    </p>
-                </a>
+            <div className="flex flex-grow flex-col gap-y-3 overflow-y-auto px-10 py-5">
+                {repositories.map((repository) => (
+                    <Repository key={repository.id} repository={repository} />
+                ))}
 
-                <a
-                    className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-                    href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-                    rel="noopener noreferrer"
-                    target="_blank"
-                >
-                    <h2 className={`mb-3 text-2xl font-semibold`}>
-                        Deploy{' '}
-                        <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-                            -&gt;
-                        </span>
-                    </h2>
-                    <p
-                        className={`m-0 max-w-[30ch] text-balance text-sm opacity-50`}
+                {repositories.length > 0 && isLoading === true && (
+                    <div className="flex items-center justify-center">
+                        <CgSpinner className="animate-spin" />
+                    </div>
+                )}
+
+                {repositories.length > 0 && isLoading === false && (
+                    <button
+                        className="hover:underline"
+                        onClick={() => {
+                            handleLoadMore();
+                        }}
                     >
-                        Instantly deploy your Next.js site to a shareable URL
-                        with Vercel.
-                    </p>
-                </a>
+                        載入更多
+                    </button>
+                )}
             </div>
         </main>
     );
