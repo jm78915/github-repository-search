@@ -1,36 +1,51 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# GitHub Repository Search Web Application
+
+This web application allows users to search for repositories on GitHub.
 
 ## Getting Started
 
-First, run the development server:
+To get started with the development server, follow these steps:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1. Copy the `.env.example` file and create a new file named `.env.local`:
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+   ```bash
+   cp .env.example .env.local
+   ```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+2. Open the newly created `.env.local` file in a text editor and set the following configurations:
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+   ```env
+   # GitHub API 金鑰
+   GITHUB_TOKEN=your-api-key
 
-## Learn More
+   # GitHub API 版本日期
+   X_GITHUB_API_VERSION=2022-11-28
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+   Replace `your-api-key` with your actual GitHub API key.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3. Run the development server:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+   ```bash
+   npm run dev
+   ```
 
-## Deploy on Vercel
+   This will launch the application's development server. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result. You can now start working on the GitHub repository search functionality.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Building and Running the Application
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Once you have made the necessary changes and are ready to build and run the application for production, use the following commands:
+
+1. Build the application:
+
+   ```bash
+   npm run build
+   ```
+
+2. Start the application:
+
+   ```bash
+   npm run start
+   ```
+
+These commands will compile the application for production and start the server to serve the optimized build. Make sure to test the production version to ensure everything is working as expected.
