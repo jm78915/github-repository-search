@@ -1,3 +1,27 @@
 {
-  "extends": "next/core-web-vitals"
+  "extends": [
+    "next/core-web-vitals",
+    "plugin:prettier/recommended"
+  ],
+  "plugins": [
+    "simple-import-sort"
+  ],
+  "rules": {
+    "arrow-body-style": [
+      "error",
+      "as-needed"
+    ],
+    "object-shorthand": [
+      "error",
+      "never"
+    ],
+    "prefer-template": "error",
+    "react/jsx-boolean-value": [
+      "error",
+      "always"
+    ],
+    "react/jsx-sort-props": "error",
+    "simple-import-sort/exports": "error",
+    "simple-import-sort/imports": "error"
+  }
 }
